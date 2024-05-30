@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página Principal</title>
+  <link rel="stylesheet" th:href="@{/css/estilosAddProducto.css}">
+  <script>
+    function confirmarEliminacion() {
+      if (confirm("¿Estás seguro de que quieres eliminar este cliente?")) {
+        document.getElementById('formDelete').submit();
+      }
+    }
+  </script>
+</head>
+<body>
+<header>
+  <nav th:replace="~{fragments/cabeceraAdmin}"></nav>
+</header>
+
+<div class="content">
+  <h1>Lista de Usuarios</h1>
+  <div class="container">
+    <table class="table table-bordered mt-3">
+      <thead>
+      <tr>
+        <th>Email</th>
+        <th>Pregunta de Recuperación</th>
+        <th>Respuesta de Recuperación</th>
+        <th>Última Fecha de Conexión</th>
+        <th>Número de accesos</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="usuario : ${usuarios}">
+        <td th:text="${usuario.email}"></td>
+        <td th:text="${usuario.pregRec}"></td>
+        <td th:text="${usuario.respRec}"></td>
+        <td th:text="${usuario.fechaUltimaConexion}"></td>
+        <td th:text="${usuario.numeroAccesos}"></td>
+        <td>
+          <form id="formDelete" th:action="@{/administrador/usuarios/eliminar/{id}(id=${usuario.email})}" method="post">
+            <button type="button" onclick="confirmarEliminacion()">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

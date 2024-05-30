@@ -6,7 +6,9 @@ import org.grupo4.practica_integradora_g4.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -22,5 +24,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario save(Usuario usuario) {
         return usuarioRepository.save(usuario);
+    }
+
+
+    public List<Usuario> findAll() {
+        return usuarioRepository.findAll();
+    }
+
+
+    public void deleteById(String id) {
+        usuarioRepository.deleteById(id);
     }
 }

@@ -90,7 +90,22 @@ public class ControladorAdmin {
 
         return "loginAdmin/administracion";
     }
+    @GetMapping("/usuarios")
+    public String getUsuarios(HttpSession session, Model model) {
+        if (session.getAttribute("usuario") == null) {
+            return "administrador/errorAcceso";
+        }
+        List<Usuario> usuarios = usuarioService.findAll();
+        model.addAttribute("usuarios", usuarios);
+        model.addAttribute("usuario", session.getAttribute("usuario"));
+        return "administrador/usuario";
+    }
 
+    @PostMapping("/usuarios/eliminar/{id}")
+    public String eliminarUsuario(@PathVariable("id") String id) {
+        usuarioService.deleteById(id);
+        return "redirect:/administrador/usuarios";
+    }
 
 
 
