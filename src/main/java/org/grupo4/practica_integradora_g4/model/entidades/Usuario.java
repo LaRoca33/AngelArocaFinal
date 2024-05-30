@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -48,5 +49,8 @@ public class Usuario {
     private Integer numeroAccesos=0;
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Auditoria> auditoria;
+    private boolean bloqueado;
+    private LocalDateTime fechaDesbloqueo;
+
 }
 

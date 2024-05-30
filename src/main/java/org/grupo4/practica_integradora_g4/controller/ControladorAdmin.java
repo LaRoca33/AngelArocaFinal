@@ -16,6 +16,8 @@ import org.grupo4.practica_integradora_g4.service.ProductoService;
 import org.grupo4.practica_integradora_g4.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -105,6 +107,19 @@ public class ControladorAdmin {
     public String eliminarUsuario(@PathVariable("id") String id) {
         usuarioService.deleteById(id);
         return "redirect:/administrador/usuarios";
+    }
+    @PostMapping("/bloquear-usuario/{id}")
+    @ResponseBody
+    public ResponseEntity<String> bloquearUsuario(@PathVariable("id") String usuario_id) {
+        try {
+            String mensajeOperacion = usuarioService.bloquearUsuario(usuario_id);
+            if (mensajeOperacion.equals("El usuario no existe")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeOperacion);
+            }
+            return ResponseEntity.ok().body(mensajeOperacion);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al bloquear el usuario: " + e.getMessage());
+        }
     }
 
 

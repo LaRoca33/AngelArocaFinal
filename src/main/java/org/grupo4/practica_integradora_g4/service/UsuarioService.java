@@ -16,4 +16,7 @@ public interface UsuarioService {
 
     List<Usuario> findAll();
     void deleteById(String id);
+    Optional<Usuario> findById(String id);
+
+    String bloquearUsuario(String usuarioId);
 }

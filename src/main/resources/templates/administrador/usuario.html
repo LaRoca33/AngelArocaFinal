@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Página Principal</title>
   <link rel="stylesheet" th:href="@{/css/estilosAddProducto.css}">
+  <link rel="stylesheet" th:href="@{/css/usuario.css}">
   <script>
     function confirmarEliminacion() {
       if (confirm("¿Estás seguro de que quieres eliminar este cliente?")) {
@@ -29,6 +30,9 @@
         <th>Respuesta de Recuperación</th>
         <th>Última Fecha de Conexión</th>
         <th>Número de accesos</th>
+        <th>Bloquear</th>
+        <th>Estado</th>
+        <th>Acciones</th>
       </tr>
       </thead>
       <tbody>
@@ -38,6 +42,12 @@
         <td th:text="${usuario.respRec}"></td>
         <td th:text="${usuario.fechaUltimaConexion}"></td>
         <td th:text="${usuario.numeroAccesos}"></td>
+        <td class="accion-bloquear" th:data-email="${usuario.email}"
+            th:data-bloqueado="${usuario.isBloqueado()}"
+            th:text="${usuario.isBloqueado() ? 'DESBLOQUEAR' : 'BLOQUEAR'}"></td>
+
+        <td th:class="${usuario.isBloqueado() ? 'fondo-rojo' : 'fondo-verde'}"
+            th:text="${usuario.bloqueado ? 'Bloqueado' : 'No bloqueado'}"></td>
         <td>
           <form id="formDelete" th:action="@{/administrador/usuarios/eliminar/{id}(id=${usuario.email})}" method="post">
             <button type="button" onclick="confirmarEliminacion()">Eliminar</button>
@@ -49,4 +59,5 @@
   </div>
 </div>
 </body>
+<script th:src="@{/js/areaAdmin.js}"></script>
 </html>

@@ -1,0 +1,18 @@
+.accion-bloquear{
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 250ms ease-in-out, color 250ms ease-in-out;
+}
+.accion-bloquear:hover{
+    background-color: #000000;
+    color: white;
+}
+.fondo-rojo {
+    background-color: #cc0000;
+    color: white;
+}
+
+.fondo-verde {
+    background-color: #00cc00;
+    color: white;
+}
