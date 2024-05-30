@@ -3,6 +3,7 @@ package org.grupo4.practica_integradora_g4.model.entidades;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import org.grupo4.practica_integradora_g4.model.extra.DatosContacto;
@@ -12,14 +13,15 @@ import org.grupo4.practica_integradora_g4.model.extra.DatosUsuario;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
-
-@ToString
+@NoArgsConstructor
+@ToString(exclude = {"tarjetasCredito","direcciones"})
 @Entity
 @Data
 public class Cliente {
@@ -68,9 +70,12 @@ public class Cliente {
             foreignKey = @ForeignKey(name = "FK_cli_usuario_usuarioEmail")
     )
     private Usuario usuarioEmail;
+  /*  @NotBlank(groups = DatosUsuario.class)
+    @NotNull(groups = DatosUsuario.class)
 
+   */
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TarjetaCredito> tarjetasCredito = new HashSet<>(5) ;
+    private Set<TarjetaCredito> tarjetasCredito = new HashSet<>() ;
 
 
     private BigDecimal gastoAcumuladoCliente;
@@ -93,10 +98,25 @@ public class Cliente {
     private Auditoria auditoria;
 
     @NotBlank ( groups = DatosUsuario.class)
+    @NotNull (groups = DatosUsuario.class)
     private String comentarios;
-    public Cliente() {
-        this.tarjetasCredito = new HashSet<>();
-        this.tarjetasCredito.add(new TarjetaCredito()); // Agregar una tarjeta por defecto
+
+    public void addItem(TarjetaCredito tarjetaCredito) {
+        this.tarjetasCredito.add(tarjetaCredito);
+        tarjetaCredito.setCliente(this);
     }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); // Solo usa 'id' para evitar recursión
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Cliente cliente = (Cliente) obj;
+        return Objects.equals(id, cliente.id);
+    }
+
 }
 

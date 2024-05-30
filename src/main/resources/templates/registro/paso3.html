@@ -12,7 +12,22 @@
             $("#agregarTarjeta").click(function () {
                 counter++;
                 let newTarjeta = `
+<!--
                     <div class="tarjeta">
+
+                        <label for="numero${counter}">Numero:</label>
+                        <input type="text" th:field="*{tarjetasCredito[${counter}].numero}"><br>
+                        <label for="tipoTarjeta${counter}">Tipo de tarjeta:</label>
+                        <input type="text" th:field="*{tarjetasCredito[${counter}].tipoTarjetaCredito}"><br>
+                        <label for="cvv${counter}">CVV:</label>
+                        <input type="text" th:field="*{tarjetasCredito[${counter}].cvv}"><br>
+                        <label for="fechaCad${counter}">Fecha de caducidad:</label>
+                        <input type="text" th:field="*{tarjetasCredito[${counter}].fechaCad}"><br>
+                        <input type="hidden" th:field="*{tarjetasCredito}">
+                    </div>
+
+    -->
+                         <div class="tarjeta">
 
                         <label for="numero${counter}">Numero:</label>
                         <input type="text" th:field="*{tarjetasCredito[${counter}].numero}"><br>
@@ -55,14 +70,14 @@
             <legend>Tarjetas de crédito:</legend>
             <div class="tarjeta">
 
-                <label for="numero${counter}">Numero:</label>
-                <input type="text" th:field="*{tarjetasCredito[0].numero}"><br>
-                <label for="tipoTarjeta${counter}">Tipo de tarjeta:</label>
-                <input type="text" th:field="*{tarjetasCredito[0].tipoTarjetaCredito}"><br>
-                <label for="cvv${counter}">CVV:</label>
-                <input type="text" th:field="*{tarjetasCredito[0].cvv}"><br>
-                <label for="fechaCad${counter}">Fecha de caducidad:</label>
-                <input type="text" th:field="*{tarjetasCredito[0].fechaCad}"><br>
+                <label for="numero">Numero:</label>
+                <input type="text" name="numero" th:value="${numero}"><br>
+                <label for="tipoTarjeta">Tipo de tarjeta:</label>
+                <input type="text" name="tipoTarjeta" th:value="${tipoTarjeta}"><br>
+                <label for="cvv">CVV:</label>
+                <input type="text" name="cvv" th:value="${cvv}"><br>
+                <label for="fechaCad">Fecha de caducidad:</label>
+                <input type="text" name="fechaCad" th:value="${fechaCad}"><br>
 
             </div>
         </fieldset>

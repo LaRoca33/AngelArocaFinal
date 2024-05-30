@@ -17,11 +17,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
-@Controller
+        @Controller
 @RequestMapping(value = "registro")
 public class ControladorRegistroCliente {
     @Autowired
@@ -38,6 +41,8 @@ public class ControladorRegistroCliente {
     private DireccionService direccionService;
     @Autowired
     private ClienteService clienteService;
+    @Autowired
+    private TarjetaCreditoService tarjetaCreditoService;
 
 
     @ModelAttribute("listaGeneros")
@@ -215,7 +220,6 @@ public class ControladorRegistroCliente {
 
             model.addAttribute("clientePlantilla", cliente);
         }else model.addAttribute("clientePlantilla",cliente);
-
         model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
         return "registro/paso3";
     }
@@ -224,6 +228,10 @@ public class ControladorRegistroCliente {
     private String paso3Post(
             @Validated({DatosUsuario.class})
             @ModelAttribute("clientePlantilla") Cliente cliente,
+            @RequestParam("numero") Integer numero,
+            @RequestParam("tipoTarjeta") String tipoTarjeta,
+            @RequestParam("cvv") String cvv,
+            @RequestParam("fechaCad") LocalDate fechaCad,
             BindingResult posiblesErrores,
             HttpSession sesion,
             Model model
@@ -235,26 +243,17 @@ public class ControladorRegistroCliente {
             System.out.println(posiblesErrores.getAllErrors());
             return "registro/paso3";
         } else {
-            // El objeto cliente ya contiene las tarjetas de crédito ingresadas en el formulario
-            // Puedes acceder a ellas directamente desde el objeto cliente
-
-            // Por ejemplo, puedes iterar sobre las tarjetas de crédito y hacer algo con ellas
-
 
             // Procesar las tarjetas de crédito y agregar al cliente
-      /*      Set<TarjetaCredito> tarjetasCredito = cliente.getTarjetasCredito();
-            if (tarjetasCredito != null) {
-                for (TarjetaCredito tarjeta : tarjetasCredito) {
-                    tarjeta.setCliente(cliente);
-                }
-            }
 
-       */
+            cliente.addItem(new TarjetaCredito(numero,tipoTarjeta,cvv,fechaCad,cliente));
+
 
             // Guardar el cliente en la base de datos, si es necesario
             // clienteService.save(cliente);
-
+            System.out.println(cliente.getTarjetasCredito());
             sesion.setAttribute("datos_usuario", cliente);
+
             model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
             return "redirect:/registro/resumen";
         }
@@ -285,7 +284,7 @@ public class ControladorRegistroCliente {
         if (sesion.getAttribute("datos_usuario") != null) {
             Cliente datos_usuario = (Cliente) sesion.getAttribute("datos_usuario");
             cliente.setComentarios(datos_usuario.getComentarios());
-            cliente.setTarjetasCredito(datos_usuario.getTarjetasCredito());
+
         }
 
         Usuario usuAut = (Usuario) sesion.getAttribute("usuarioAutenticado");
@@ -305,7 +304,13 @@ public class ControladorRegistroCliente {
             direccionService.save(direccion);
             cliente.setDirecciones(direccion);
         }
-
+        if (sesion.getAttribute("datos_usuario") != null) {
+            Cliente datos_usuario = (Cliente) sesion.getAttribute("datos_usuario");
+            for (TarjetaCredito tarjeta : datos_usuario.getTarjetasCredito()) {
+                tarjeta.setCliente(cliente); // Establecer el cliente en cada tarjeta
+            }
+            tarjetaCreditoService.save(datos_usuario.getTarjetasCredito()); // Guardar las tarjetas de crédito
+        }
         model.addAttribute("clientePlantilla", cliente);
         sesion.setAttribute("clienteFinal", cliente);
         registroCompleto = true;
