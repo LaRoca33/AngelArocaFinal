@@ -47,7 +47,8 @@ public class ControladorAdmin {
         if (session.getAttribute("usuario") == null) {
             return "administrador/errorAcceso";
         }
-        List<Cliente> clientes = clienteService.findAll();
+       List<Cliente> clientes = clienteService.findAll();
+
         model.addAttribute("clientes", clientes);
         model.addAttribute("usuario", session.getAttribute("usuario"));
         return "loginAdmin/administracion";
@@ -58,6 +59,39 @@ public class ControladorAdmin {
         clienteService.deleteById(uuid);
         return "redirect:/administrador/inicio";
     }
+
+    @PostMapping("/inicio/buscar-clientes")
+    public String buscarCliente(
+            @RequestParam(value = "nombre", required = false) String nombre,
+            @RequestParam(value = "apellidos", required = false) String apellidos,
+            @RequestParam(value = "usuarioEmail.email", required = false) String email,
+            @RequestParam(value = "pais.nombre", required = false) String pais,
+            @RequestParam(value = "genero.gen", required = false) String genero,
+            @RequestParam(value = "telefonoMovil", required = false) String telefono,
+            @RequestParam(value = "documento", required = false) String documento,
+            @RequestParam(value = "tipoDocumentoCliente", required = false) String tipoDoc,
+            @RequestParam(value = "comentarios", required = false) String comentarios,
+            Model modelo) {
+        List<Cliente> clientes;
+        modelo.addAttribute("nombre", nombre);
+        modelo.addAttribute("apellidos", apellidos);
+        modelo.addAttribute("usuarioEmail.email", email);
+        modelo.addAttribute("pais.nombre", pais);
+        modelo.addAttribute("genero.gen", genero);
+        modelo.addAttribute("telefonoMovil", telefono);
+        modelo.addAttribute("documento", documento);
+        modelo.addAttribute("tipoDocumentoCliente", tipoDoc);
+        modelo.addAttribute("comentarios", comentarios);
+        System.out.println(genero);
+        clientes = clienteService.buscarParam(nombre, apellidos, email,pais,genero,telefono,documento,tipoDoc,comentarios);
+        System.out.println(clientes);
+        System.out.println(clientes.size());
+        modelo.addAttribute("clientes", clientes);
+
+        return "loginAdmin/administracion";
+    }
+
+
 
 
 

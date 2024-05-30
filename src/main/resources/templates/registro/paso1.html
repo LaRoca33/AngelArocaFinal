@@ -49,11 +49,11 @@
         <br>
         <!--No ponemos usuario porque se debe crear antes, y la primera vez que se inicia sesión, se reedirige a este formulario -->
         <label for="tipoDocumentoCliente">Tipo de Documento: </label>
-        <select id="tipoDocumentoCliente" name="pais">
+        <select id="tipoDocumentoCliente" th:field="*{tipoDocumentoCliente}">
             <option th:each="p : ${listaTiposDocumento}"
-                    th:value="${p.key}"
+                    th:value="${p.value}"
                     th:text="${p.value}"
-                    th:field="*{tipoDocumentoCliente}">
+                    >
             </option>
         </select>
         <br>

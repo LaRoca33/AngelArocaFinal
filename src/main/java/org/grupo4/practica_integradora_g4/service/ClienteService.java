@@ -27,5 +27,16 @@ public class ClienteService {
         direccionRepository.deleteByClienteId(id);
         clienteRepository.deleteById(id);
     }
+  /* public List<Cliente> busquedaParametrizada(String nombre, String apellidos, String email, String pais, String genero,String telefono, String tipoDoc, String doc, String comentarios){
+        return clienteRepository.findByNombreContainingIgnoreCaseAndApellidosContainingIgnoreCaseAndUsuarioEmail_EmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndGeneroGenContainingIgnoreCaseAndTelefonoMovilContainingIgnoreCaseAndTipoDocumentoClienteContainingIgnoreCaseAndDocumentoContainingIgnoreCaseAndComentariosContainingIgnoreCase(
+                nombre, apellidos, email, pais, genero,telefono, tipoDoc, doc, comentarios);
+    }
+    */
+
+
+    public List<Cliente> buscarParam(String nombre,String apellidos,String email,String pais,String genero,String telefonoMovil,String documento,String tipoDocumentoCliente,String comentarios){
+        return clienteRepository.findByNombreContainingIgnoreCaseAndApellidosContainingIgnoreCaseAndUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndGeneroGenContainingIgnoreCaseAndTelefonoMovilContainingIgnoreCaseAndDocumentoContainingIgnoreCaseAndTipoDocumentoClienteContainingIgnoreCaseAndComentariosContainingIgnoreCase(nombre,apellidos,email,pais,genero,telefonoMovil,documento,tipoDocumentoCliente,comentarios);
+    }
+
 
 }

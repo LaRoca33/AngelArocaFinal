@@ -15,7 +15,7 @@ import lombok.*;
 public class Genero {
     @Id
     @NotBlank
-    @NotBlank
+    @NotNull
     private String gen;
     @NotBlank
     @NotNull

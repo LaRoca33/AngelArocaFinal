@@ -5,30 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Principal</title>
     <link rel="stylesheet" th:href="@{/css/estilosAddProducto.css}">
-
 </head>
 <body>
 <header>
     <nav th:replace="~{fragments/cabeceraAdmin}"></nav>
 </header>
 
-
 <div class="content">
     <h1>Página de administración</h1>
-    <div th:if="${session.usuario != null}">
-        <p>Bienvenido, <span th:text="${session.usuario.email}">Señor Administrador: </span>!</p>
-        <a th:href="@{/logout}">Logout</a>
+    <div th:if="${usuario != null}">
+        <p>Bienvenido, <span th:text="${usuario.email}">Señor Administrador: </span>!</p>
+        <a th:href="@{/administrador/cerrar_sesion}">Logout</a>
     </div>
-    <div th:if="${session.usuario == null}">
+    <div th:if="${usuario == null}">
         <a th:href="@{/loginAdmin}">Login</a>
         <a th:href="@{/register}">Register</a>
     </div>
     <div class="container">
         <h2 class="mt-5">Lista de Clientes</h2>
+        <form id="formBusquedaCliente" th:action="@{/administrador/inicio/buscar-clientes}" method="post">
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" th:value="${nombre}">
+
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" id="apellidos" name="apellidos" th:value="${apellidos}">
+
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="usuarioEmail.email" th:value="${usuarioEmail?.email}" >
+
+            <label for="pais">Pais:</label>
+            <select id="pais" name="pais.nombre" th:value="${pais?.nombre}">
+                <option value="TODOS">TODOS</option>
+                <option value="Portugal">PORTUGAL</option>
+                <option value="Andorra">ANDORRA</option>
+                <option value="Francia">FRANCIA</option>
+            </select>
+
+            <label for="genero">Genero:</label>
+            <select id="genero" name="genero.gen" th:value="${genero?.gen}">
+                <option value="TODOS">TODOS</option>
+                <option value="Masculino">MASCULINO</option>
+                <option value="Femenino">FEMENINO</option>
+                <option value="Otro">OTRO</option>
+            </select>
+
+            <label for="telefonoMovil">Telefono:</label>
+            <input type="text" id="telefonoMovil" name="telefonoMovil" th:value="${telefonoMovil}">
+
+            <label for="documento">Documento:</label>
+            <input type="text" id="documento" name="documento" th:value="${documento}">
+
+            <label for="tipoDocumentoCliente">Tipo Documento:</label>
+            <input type="text" id="tipoDocumentoCliente" name="tipoDocumentoCliente" th:value="${tipoDocumentoCliente}">
+
+            <label for="comentarios">Comentarios:</label>
+            <input type="text" id="comentarios" name="comentarios" th:value="${comentarios}">
+            <input type="submit" value="Buscar clientes">
+        </form>
         <table class="table table-bordered mt-3">
             <thead>
             <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>Apellidos</th>
                 <th>Email</th>
@@ -38,11 +75,11 @@
                 <th>Tipo Documento</th>
                 <th>Documento</th>
                 <th>Comentarios</th>
+                <th>Acciones</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="cliente : ${clientes}">
-                <td th:text="${cliente.id}"></td>
                 <td th:text="${cliente.nombre}"></td>
                 <td th:text="${cliente.apellidos}"></td>
                 <td th:text="${cliente.usuarioEmail.email}"></td>
@@ -54,7 +91,7 @@
                 <td th:text="${cliente.comentarios}"></td>
                 <td>
                     <form th:action="@{/administrador/inicio/eliminar/{id}(id=${cliente.id})}" method="post">
-                        <button type="submit" >Eliminar</button>
+                        <button type="submit">Eliminar</button>
                     </form>
                 </td>
             </tr>
