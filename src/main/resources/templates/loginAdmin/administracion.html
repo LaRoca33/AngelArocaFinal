@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Principal</title>
     <link rel="stylesheet" th:href="@{/css/estilosAddProducto.css}">
+    <script>
+        function confirmarEliminacion() {
+            if (confirm("¿Estás seguro de que quieres eliminar este cliente?")) {
+                document.getElementById('formDelete').submit();
+            }
+        }
+    </script>
 </head>
 <body>
 <header>
@@ -90,8 +97,8 @@
                 <td th:text="${cliente.documento}"></td>
                 <td th:text="${cliente.comentarios}"></td>
                 <td>
-                    <form th:action="@{/administrador/inicio/eliminar/{id}(id=${cliente.id})}" method="post">
-                        <button type="submit">Eliminar</button>
+                    <form id="formDelete" th:action="@{/administrador/inicio/eliminar/{id}(id=${cliente.id})}" method="post">
+                        <button type="button" onclick="confirmarEliminacion()">Eliminar</button>
                     </form>
                 </td>
             </tr>
