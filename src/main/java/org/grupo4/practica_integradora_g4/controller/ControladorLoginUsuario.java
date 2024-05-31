@@ -40,6 +40,7 @@ public class ControladorLoginUsuario {
                 model.addAttribute("usuario_bloqueado", true);
                 String fechaDesbloqueoFormateada = usuarioEncontrado.getFechaDesbloqueo().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
                 model.addAttribute("fechaDesbloqueo", fechaDesbloqueoFormateada);
+                model.addAttribute("error","Usuario bloqueado");
                 return "loginUsuario/loginPaso1";
             }
             session.setAttribute("usuarioTemporal", usuarioEncontrado);
@@ -75,6 +76,7 @@ public class ControladorLoginUsuario {
             if (usuarioTemporal.getIntentosFallidos() >= MAX_INTENTOS_FALLIDOS) {
                 usuarioTemporal.setBloqueado(true);
                 usuarioTemporal.setFechaDesbloqueo(LocalDateTime.now().plusDays(1)); // Bloqueo por 1 día
+
                 model.addAttribute("usuario_bloqueado", true);
                 String fechaDesbloqueoFormateada = usuarioTemporal.getFechaDesbloqueo().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
                 model.addAttribute("fechaDesbloqueo", fechaDesbloqueoFormateada);
@@ -84,8 +86,6 @@ public class ControladorLoginUsuario {
             model.addAttribute("error", "Contraseña incorrecta. Intentos fallidos: " + usuarioTemporal.getIntentosFallidos());
             return "loginUsuario/loginPaso2";
         }
-        usuarioTemporal.setIntentosFallidos(0); // Resetear los intentos fallidos
-        usuarioService.save(usuarioTemporal);
         session.setAttribute("usuarioAutenticado", usuarioTemporal);
         session.removeAttribute("usuarioTemporal");
         return "redirect:/registro/paso1";

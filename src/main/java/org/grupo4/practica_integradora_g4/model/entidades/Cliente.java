@@ -30,6 +30,8 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     //DATOS PERSONALES
+
+
     @ManyToOne
     @JoinColumn(
             name = "genero_gen",

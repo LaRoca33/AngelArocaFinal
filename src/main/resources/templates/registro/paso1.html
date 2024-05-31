@@ -27,12 +27,14 @@
         <div class="radio-buttons">
             <th:block th:each="g : ${listaG}">
                 <label class="radio-label">
-                    <input type="radio"   th:value="${g.siglas}" th:field="*{genero}">
+                    <input type="radio"   th:value="${g.siglas}" th:field="*{genero}" >
                     <span th:text="${g.gen}"></span>
                 </label>
             </th:block>
         </div>
-        <div th:errors="*{genero}" class="error"></div>
+        <div th:if="${error}" th:class="error">
+            <p th:text="${error}"></p>
+        </div>
 
 <!--        <label for="fechaNacimiento" >Fecha de Nacimiento: </label>-->
 <!--        <input placeholder="pablo1234.." type="text" th:field="*{fechaNacimiento}"/>-->

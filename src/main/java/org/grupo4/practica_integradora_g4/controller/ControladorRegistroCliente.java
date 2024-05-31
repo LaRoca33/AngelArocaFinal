@@ -2,6 +2,7 @@
         package org.grupo4.practica_integradora_g4.controller;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.NotNull;
 import org.grupo4.practica_integradora_g4.extras.Colecciones;
 import org.grupo4.practica_integradora_g4.model.entidades.*;
 import org.grupo4.practica_integradora_g4.model.extra.DatosContacto;
@@ -68,14 +69,12 @@ public class ControladorRegistroCliente {
 
     //PASO 1
     @GetMapping("paso1")
-    private String paso1Get(Cliente cliente,
-                            Model model,
-                            HttpSession sesion
-    ){
+    private String paso1Get(Cliente cliente, Model model, HttpSession sesion) {
         if (sesion.getAttribute("usuarioAutenticado") == null) {
             return "administrador/errorAcceso";
         }
-        // Cargar los países y guardarlos en el servicio de países
+
+        // Cargar los países y generos en el servicio
         Colecciones.getNacionalidades().forEach((siglas, nombre) -> {
             Pais pais = new Pais(nombre, siglas);
             paisService.save(pais);
@@ -85,81 +84,74 @@ public class ControladorRegistroCliente {
             generoService.save(genero);
         });
         Colecciones.getTIPOCLIENTES().forEach((tipo) -> {
-            TipoCliente tipoCliente = new TipoCliente(tipo.getTipo(),tipo.getSiglas(),tipo.getGastoUmbral(),tipo.getPorcentajeDescuento());
+            TipoCliente tipoCliente = new TipoCliente(tipo.getTipo(), tipo.getSiglas(), tipo.getGastoUmbral(), tipo.getPorcentajeDescuento());
             tipoClienteService.save(tipoCliente);
         });
 
-        // Añadir la lista de países al modelo
-        model.addAttribute("listaP",paisRepository.findAll());
-        model.addAttribute("listaG",generoRepository.findAll());
-        if (sesion.getAttribute("datos_personales")!=null){
-            cliente=(Cliente) sesion.getAttribute("datos_personales");
-            model.addAttribute("clientePlantilla", cliente);
-        }else model.addAttribute("clientePlantilla",cliente);
-
+        model.addAttribute("listaP", paisRepository.findAll());
+        model.addAttribute("listaG", generoRepository.findAll());
+        if (sesion.getAttribute("datos_personales") != null) {
+            cliente = (Cliente) sesion.getAttribute("datos_personales");
+        }
+        model.addAttribute("clientePlantilla", cliente);
         model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
         return "registro/paso1";
     }
 
+            @PostMapping("paso1")
+            private String paso1Post(
+                    @Validated({DatosPersonales.class}) @ModelAttribute("clientePlantilla") Cliente cliente,
+                    BindingResult posiblesErrores,
+                    @RequestParam(value = "pais", required = false) String siglaPais,
+                    @RequestParam(value = "genero", required = false) String siglaGenero,
+                    HttpSession sesion,
+                    Model model
+            ) {
+                if (sesion.getAttribute("usuarioAutenticado") == null) {
+                    return "administrador/errorAcceso";
+                }
 
-    @PostMapping("paso1")
-    private String paso1Post(
-            @Validated({DatosPersonales.class})
-            @ModelAttribute("clientePlantilla") Cliente cliente,
-            BindingResult posiblesErrores,
-            @RequestParam("pais") String siglaPais,
-            @RequestParam("genero") String siglaGenero,
-            HttpSession sesion,
-            Model model
-    ){
-        if (sesion.getAttribute("usuarioAutenticado") == null) {
-            return "administrador/errorAcceso";
-        }
-        // Añadir la lista de países y generos al modelo
-        model.addAttribute("listaP", paisRepository.findAll());
-        model.addAttribute("listaG", generoRepository.findAll());
+                model.addAttribute("listaP", paisRepository.findAll());
+                model.addAttribute("listaG", generoRepository.findAll());
 
-        // Obtener la sigla del país  y genero seleccionado en el formulario
+                // Verificar si el género es nulo o vacío
+                if (siglaGenero == null || siglaGenero.isEmpty()) {
+                    // Manejar el caso cuando el género no se selecciona
+                    model.addAttribute("error", "Debe seleccionar un género");
+                    return "registro/paso1";
+                }
 
-        System.out.println(siglaPais);
-        String cadenaRotaPais = siglaPais.split(",")[0];
-        System.out.println(siglaGenero);
+                // Asignación de país y género seleccionados
+                Pais paisSeleccionado = paisRepository.findBySiglas(siglaPais.split(",")[0]);
+                Genero generoSeleccionado = generoRepository.findBySiglas(siglaGenero);
 
+                if (paisSeleccionado != null) {
+                    cliente.setPais(paisSeleccionado);
+                } else {
+                    model.addAttribute("error", "País no existente");
+                    return "registro/paso1";
+                }
+                if (generoSeleccionado != null) {
+                    cliente.setGenero(generoSeleccionado);
+                } else {
+                    model.addAttribute("error", "Género no existente");
+                    return "registro/paso1";
+                }
 
-        // Buscar el país y genero en la base de datos por su sigla
-        Pais paisSeleccionado = paisRepository.findBySiglas(cadenaRotaPais);
-        Genero generoSeleccionado = generoRepository.findBySiglas(siglaGenero);
-        // Si se encuentra el país, asignarlo al cliente
-        if (paisSeleccionado != null) {
-            cliente.setPais(paisSeleccionado);
-            sesion.setAttribute("datos_personales", cliente);
-        } else {
-            model.addAttribute("error", "Pais no existente");
-        }
-        if (generoSeleccionado != null) {
-            cliente.setGenero(generoSeleccionado);
-            sesion.setAttribute("datos_personales", cliente);
-        } else {
-            model.addAttribute("error", "Pais no existente");
-        }
-
-        if (posiblesErrores.hasErrors()) {
-            System.out.println(posiblesErrores.getAllErrors());
-
-            model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
-            return "registro/paso1";
-        }
-        else {
-            System.out.println(cliente.toString());
-            sesion.setAttribute("datos_personales", cliente);
-
-            model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
-            return "redirect:/registro/paso2";
-        }
-    }
+                // Manejo de errores de validación
+                if (posiblesErrores.hasErrors()) {
+                    model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
+                    return "registro/paso1";
+                }
+                System.out.println(cliente.getGenero());
+                sesion.setAttribute("datos_personales", cliente);
+                model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
+                return "redirect:/registro/paso2";
+            }
 
 
-    //PASO 2
+
+            //PASO 2
     @GetMapping("paso2")
     private String paso2Get(Cliente cliente,
                             Model model,
@@ -289,12 +281,8 @@ public class ControladorRegistroCliente {
         }
 
         Usuario usuAut = (Usuario) sesion.getAttribute("usuarioAutenticado");
-        if (usuAut == null) {
-            return "error";  // Maneja el caso donde el usuario no está en la sesión
-        }
 
         cliente.setUsuarioEmail(usuAut);
-
         clienteService.save(cliente);
 
 
@@ -304,6 +292,7 @@ public class ControladorRegistroCliente {
             direccion.setCliente(cliente);
             direccionService.save(direccion);
             cliente.setDirecciones(direccion);
+
         }
         if (sesion.getAttribute("datos_usuario") != null) {
             Cliente datos_usuario = (Cliente) sesion.getAttribute("datos_usuario");
@@ -312,6 +301,10 @@ public class ControladorRegistroCliente {
             }
             tarjetaCreditoService.save(datos_usuario.getTarjetasCredito()); // Guardar las tarjetas de crédito
         }
+        clienteService.save(cliente);
+        System.out.println(cliente.getDirecciones());
+        System.out.println(cliente.getUsuarioEmail());
+        System.out.println( cliente.getTarjetasCredito());
         model.addAttribute("clientePlantilla", cliente);
         sesion.setAttribute("clienteFinal", cliente);
         registroCompleto = true;
@@ -333,7 +326,6 @@ public class ControladorRegistroCliente {
 
         if (registroCompleto) {
             registroCompleto=false;
-            Colecciones.addCliente(cliente);
             sesion.invalidate();
             return "redirect:http://localhost:8081/tienda";
         }
