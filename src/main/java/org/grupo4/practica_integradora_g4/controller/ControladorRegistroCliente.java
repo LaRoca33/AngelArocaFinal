@@ -44,6 +44,9 @@ public class ControladorRegistroCliente {
     private ClienteService clienteService;
     @Autowired
     private TarjetaCreditoService tarjetaCreditoService;
+    @Autowired
+    private UsuarioService usuarioService;
+            private static boolean usuarioEmailAsignado = false;
 
 
     @ModelAttribute("listaGeneros")
@@ -279,10 +282,12 @@ public class ControladorRegistroCliente {
 
 
         }
-
         Usuario usuAut = (Usuario) sesion.getAttribute("usuarioAutenticado");
+        if (!usuarioEmailAsignado){
+            cliente.setUsuarioEmail(usuAut);
+            usuarioEmailAsignado=true;
+        }
 
-        cliente.setUsuarioEmail(usuAut);
         clienteService.save(cliente);
 
 
@@ -319,11 +324,13 @@ public class ControladorRegistroCliente {
         if (sesion.getAttribute("usuarioAutenticado") == null) {
             return "administrador/errorAcceso";
         }
+
         Cliente cliente = (Cliente) sesion.getAttribute("clienteFinal");
         model.addAttribute("clientePlantilla", cliente);
 
         if (registroCompleto) {
             registroCompleto=false;
+            clienteService.save(cliente);
             sesion.invalidate();
             return "redirect:http://localhost:8081/tienda";
         }
