@@ -302,9 +302,7 @@ public class ControladorRegistroCliente {
             tarjetaCreditoService.save(datos_usuario.getTarjetasCredito()); // Guardar las tarjetas de crédito
         }
         clienteService.save(cliente);
-        System.out.println(cliente.getDirecciones());
-        System.out.println(cliente.getUsuarioEmail());
-        System.out.println( cliente.getTarjetasCredito());
+
         model.addAttribute("clientePlantilla", cliente);
         sesion.setAttribute("clienteFinal", cliente);
         registroCompleto = true;
