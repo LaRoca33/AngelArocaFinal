@@ -1,5 +1,8 @@
 package org.grupo4.practica_integradora_g4.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.grupo4.practica_integradora_g4.extras.Colecciones;
@@ -62,7 +65,7 @@ public class ControladorLoginUsuario {
     }
 
     @PostMapping("/loginUsuario/clave")
-    public String verificarPassword(@ModelAttribute Usuario usuario, HttpSession session, Model model) {
+    public String verificarPassword(@ModelAttribute Usuario usuario, HttpServletResponse response, HttpSession session, Model model) {
         if (session.getAttribute("usuarioTemporal") == null) {
             return "administrador/errorAcceso";
         }
@@ -74,7 +77,23 @@ public class ControladorLoginUsuario {
             usuarioTemporal.setIntentosFallidos(usuarioTemporal.getIntentosFallidos() + 1);
             if (usuarioTemporal.getIntentosFallidos() >= MAX_INTENTOS_FALLIDOS) {
                 usuarioTemporal.setBloqueado(true);
-                usuarioTemporal.setFechaDesbloqueo(LocalDateTime.now().plusDays(1)); // Bloqueo por 1 día
+                usuarioTemporal.setFechaDesbloqueo(LocalDateTime.now().plusDays(1));// Bloqueo por 1 día
+                usuarioTemporal.setIntentosFallidos(0); // Resetear los intentos fallidos
+
+                session.setAttribute("usuarioAutenticado", usuarioTemporal);
+                session.setAttribute("nombre",usuarioTemporal.getEmail().split("@"));
+                if(session.getAttribute((String) session.getAttribute("nombre"))==null){
+                    Cookie cookie = new Cookie((String) session.getAttribute("nombre"), "1");
+                    session.setAttribute((String) session.getAttribute("nombre"), "1");
+                    response.addCookie(cookie);
+
+
+                }else {
+                    Cookie cookie = new Cookie((String) session.getAttribute("nombre"), (Integer.parseInt((String) session.getAttribute((String) session.getAttribute("nombre"))) + 1) + "");
+                    session.setAttribute((String) session.getAttribute("nombre"), (Integer.parseInt((String) session.getAttribute((String) session.getAttribute("nombre"))) + 1) + "");
+                    response.addCookie(cookie);
+                }
+                usuarioTemporal.setNumeroAccesos( (Integer.parseInt((String) session.getAttribute((String) session.getAttribute("nombre")))));
                 usuarioService.save(usuarioTemporal);
                 model.addAttribute("usuario_bloqueado", true);
                 String fechaDesbloqueoFormateada = usuarioTemporal.getFechaDesbloqueo().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
@@ -89,6 +108,7 @@ public class ControladorLoginUsuario {
         usuarioService.save(usuarioTemporal);
         session.setAttribute("usuarioAutenticado", usuarioTemporal);
         session.removeAttribute("usuarioTemporal");
+
         return "redirect:/registro/paso1";
     }
 
