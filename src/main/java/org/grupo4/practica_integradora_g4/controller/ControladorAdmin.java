@@ -86,8 +86,8 @@ public class ControladorAdmin {
         modelo.addAttribute("comentarios", comentarios);
         System.out.println(genero);
         clientes = clienteService.buscarParam(nombre, apellidos, email,pais,genero,telefono,documento,tipoDoc,comentarios);
-        System.out.println(clientes);
-        System.out.println(clientes.size());
+
+
         modelo.addAttribute("clientes", clientes);
 
         return "loginAdmin/administracion";

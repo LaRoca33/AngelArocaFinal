@@ -285,6 +285,7 @@ public class ControladorRegistroCliente {
             Cliente datos_usuario = (Cliente) sesion.getAttribute("datos_usuario");
             cliente.setComentarios(datos_usuario.getComentarios());
 
+
         }
 
         Usuario usuAut = (Usuario) sesion.getAttribute("usuarioAutenticado");
