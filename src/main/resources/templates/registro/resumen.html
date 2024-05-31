@@ -23,13 +23,13 @@
     <fieldset>
         <legend>Datos Personales: </legend>
         <th:text class="pre">Genero: </th:text>
-        <th:block th:text="*{genero.gen}"></th:block>
+        <th:block th:text="*{genero != null ? genero.gen : 'No especificado'}"></th:block>
         <br>
         <th:text class="pre">Fecha Nacimiento: </th:text>
         <th:block th:text="*{fechaNacimiento}"></th:block>
         <br>
         <th:text class="pre">pais: </th:text>
-        <th:block th:text="*{pais.nombre}"></th:block>
+        <th:block th:text="*{pais != null ? pais.nombre : 'No especificado'}"></th:block>
         <br>
         <th:text class="pre">tipoDocumentoCliente: </th:text>
         <th:block th:text="*{tipoDocumentoCliente}"></th:block>
@@ -49,7 +49,7 @@
         <legend>Datos de contacto:</legend>
 
         <th:text class="pre">direccion: </th:text>
-        <th:block th:text="*{direcciones.numero}"></th:block>
+        <th:block th:text="*{direcciones != null ? direcciones.numero : 'No especificado'}"></th:block>
         <br>
     <!--    <th:text class="pre">telefonoMovil: </th:text>
         <th:block th:text="*{telefonoMovil}"></th:block>
