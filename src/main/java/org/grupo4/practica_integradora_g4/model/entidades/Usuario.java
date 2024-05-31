@@ -51,6 +51,7 @@ public class Usuario {
     private Set<Auditoria> auditoria;
     private boolean bloqueado;
     private LocalDateTime fechaDesbloqueo;
+    private int intentosFallidos;
 
 }
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ public class ControladorLoginUsuario {
 
     @Autowired
     private UsuarioService usuarioService;
+    private static final int MAX_INTENTOS_FALLIDOS = 3;
 
     // Paso 1: Pedir el email del usuario
     @GetMapping("/loginUsuario/email")
@@ -33,14 +35,21 @@ public class ControladorLoginUsuario {
     public String verificarEmail(@ModelAttribute Usuario usuario, HttpSession session, Model model) {
         Optional<Usuario> usuarioExistente = usuarioService.findByEmail(usuario.getEmail());
         if (usuarioExistente.isPresent()) {
-            session.setAttribute("usuarioTemporal", usuarioExistente.get());
+            Usuario usuarioEncontrado = usuarioExistente.get();
+            if (usuarioEncontrado.isBloqueado()) {
+                model.addAttribute("usuario_bloqueado", true);
+                String fechaDesbloqueoFormateada = usuarioEncontrado.getFechaDesbloqueo().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+                model.addAttribute("fechaDesbloqueo", fechaDesbloqueoFormateada);
+                return "loginUsuario/loginPaso1";
+            }
+            session.setAttribute("usuarioTemporal", usuarioEncontrado);
             return "redirect:/loginUsuario/clave";
         } else {
             model.addAttribute("error", "El correo no está registrado.");
             return "loginUsuario/loginPaso1";
         }
-
     }
+
 
     // Paso 2: Pedir la contraseña del usuario
     @GetMapping("/loginUsuario/clave")
@@ -62,9 +71,22 @@ public class ControladorLoginUsuario {
             return "redirect:/loginUsuario/email";
         }
         if (!usuarioTemporal.getClave().equals(usuario.getClave())) {
-            model.addAttribute("error", "Contraseña incorrecta.");
+            usuarioTemporal.setIntentosFallidos(usuarioTemporal.getIntentosFallidos() + 1);
+            if (usuarioTemporal.getIntentosFallidos() >= MAX_INTENTOS_FALLIDOS) {
+                usuarioTemporal.setBloqueado(true);
+                usuarioTemporal.setFechaDesbloqueo(LocalDateTime.now().plusDays(1)); // Bloqueo por 1 día
+                usuarioService.save(usuarioTemporal);
+                model.addAttribute("usuario_bloqueado", true);
+                String fechaDesbloqueoFormateada = usuarioTemporal.getFechaDesbloqueo().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+                model.addAttribute("fechaDesbloqueo", fechaDesbloqueoFormateada);
+                return "loginUsuario/loginPaso1";
+            }
+            usuarioService.save(usuarioTemporal);
+            model.addAttribute("error", "Contraseña incorrecta. Intentos fallidos: " + usuarioTemporal.getIntentosFallidos());
             return "loginUsuario/loginPaso2";
         }
+        usuarioTemporal.setIntentosFallidos(0); // Resetear los intentos fallidos
+        usuarioService.save(usuarioTemporal);
         session.setAttribute("usuarioAutenticado", usuarioTemporal);
         session.removeAttribute("usuarioTemporal");
         return "redirect:/registro/paso1";
