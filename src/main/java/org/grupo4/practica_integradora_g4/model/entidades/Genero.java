@@ -10,6 +10,7 @@ import lombok.*;
 @RequiredArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @Data
 public class Genero {

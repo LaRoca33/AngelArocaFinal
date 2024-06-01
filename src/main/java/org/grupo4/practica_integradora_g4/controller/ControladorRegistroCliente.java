@@ -246,7 +246,7 @@ public class ControladorRegistroCliente {
 
             // Guardar el cliente en la base de datos, si es necesario
             // clienteService.save(cliente);
-            System.out.println(cliente.getTarjetasCredito());
+
             sesion.setAttribute("datos_usuario", cliente);
 
             model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
@@ -255,68 +255,78 @@ public class ControladorRegistroCliente {
     }
 
 
-    @GetMapping("resumen")
-    private String resumenGet(Cliente cliente, Model model, HttpSession sesion) {
-        if (sesion.getAttribute("usuarioAutenticado") == null) {
-            return "administrador/errorAcceso";
-        }
+            @GetMapping("resumen")
+            private String resumenGet(Cliente cliente, Model model, HttpSession sesion) {
+                if (sesion.getAttribute("usuarioAutenticado") == null) {
+                    return "administrador/errorAcceso";
+                }
 
-        cliente = new Cliente();
-        if (sesion.getAttribute("datos_personales") != null) {
-            Cliente datos_personales = (Cliente) sesion.getAttribute("datos_personales");
-            cliente.setGenero(datos_personales.getGenero());
-            cliente.setPais(datos_personales.getPais());
-            cliente.setFechaNacimiento(datos_personales.getFechaNacimiento());
-            cliente.setTipoDocumentoCliente(datos_personales.getTipoDocumentoCliente());
-            cliente.setDocumento(datos_personales.getDocumento());
-            cliente.setNombre(datos_personales.getNombre());
-            cliente.setApellidos(datos_personales.getApellidos());
-        }
-        if (sesion.getAttribute("datos_contacto") != null) {
-            Cliente datos_contacto = (Cliente) sesion.getAttribute("datos_contacto");
-            cliente.setTelefonoMovil(datos_contacto.getTelefonoMovil());
-        }
-        if (sesion.getAttribute("datos_usuario") != null) {
-            Cliente datos_usuario = (Cliente) sesion.getAttribute("datos_usuario");
-            cliente.setComentarios(datos_usuario.getComentarios());
+                Usuario usuAut = (Usuario) sesion.getAttribute("usuarioAutenticado");
 
+                // Buscar el cliente por el usuario actual
+                Cliente clienteExistente = clienteService.findByUsuario(usuAut);
 
-        }
-        Usuario usuAut = (Usuario) sesion.getAttribute("usuarioAutenticado");
-        if (!usuarioEmailAsignado){
-            cliente.setUsuarioEmail(usuAut);
-            usuarioEmailAsignado=true;
-        }
+                if (clienteExistente != null) {
+                    cliente = clienteExistente;
+                } else {
+                    cliente = new Cliente();
+                }
 
-        clienteService.save(cliente);
+                // Actualizar los datos personales si existen en la sesión
+                if (sesion.getAttribute("datos_personales") != null) {
+                    Cliente datosPersonales = (Cliente) sesion.getAttribute("datos_personales");
+                    cliente.setGenero(datosPersonales.getGenero());
+                    cliente.setPais(datosPersonales.getPais());
+                    cliente.setFechaNacimiento(datosPersonales.getFechaNacimiento());
+                    cliente.setTipoDocumentoCliente(datosPersonales.getTipoDocumentoCliente());
+                    cliente.setDocumento(datosPersonales.getDocumento());
+                    cliente.setNombre(datosPersonales.getNombre());
+                    cliente.setApellidos(datosPersonales.getApellidos());
+                }
 
+                // Actualizar los datos de contacto si existen en la sesión
+                if (sesion.getAttribute("datos_contacto") != null) {
+                    Cliente datosContacto = (Cliente) sesion.getAttribute("datos_contacto");
+                    cliente.setTelefonoMovil(datosContacto.getTelefonoMovil());
+                }
 
-        if (sesion.getAttribute("datos_contacto") != null) {
-            Cliente datos_contacto = (Cliente) sesion.getAttribute("datos_contacto");
-            Direccion direccion = datos_contacto.getDirecciones();
-            direccion.setCliente(cliente);
-            direccionService.save(direccion);
-            cliente.setDirecciones(direccion);
+                // Actualizar los datos de usuario si existen en la sesión
+                if (sesion.getAttribute("datos_usuario") != null) {
+                    Cliente datosUsuario = (Cliente) sesion.getAttribute("datos_usuario");
+                    cliente.setComentarios(datosUsuario.getComentarios());
+                }
 
-        }
-        if (sesion.getAttribute("datos_usuario") != null) {
-            Cliente datos_usuario = (Cliente) sesion.getAttribute("datos_usuario");
-            for (TarjetaCredito tarjeta : datos_usuario.getTarjetasCredito()) {
-                tarjeta.setCliente(cliente); // Establecer el cliente en cada tarjeta
+                cliente.setUsuarioEmail(usuAut);
+                clienteService.save(cliente);
+
+                // Guardar la dirección personal si existe en la sesión
+                if (sesion.getAttribute("datos_contacto") != null) {
+                    Cliente datosContacto = (Cliente) sesion.getAttribute("datos_contacto");
+                    Direccion direccion = datosContacto.getDirecciones();
+                    direccion.setCliente(cliente);
+                    direccionService.save(direccion);
+                    cliente.setDirecciones(direccion);
+                }
+
+                // Guardar las tarjetas de crédito si existen en la sesión
+                if (sesion.getAttribute("datos_usuario") != null) {
+                    Cliente datosUsuario = (Cliente) sesion.getAttribute("datos_usuario");
+                    for (TarjetaCredito tarjeta : datosUsuario.getTarjetasCredito()) {
+                        tarjeta.setCliente(cliente);
+                    }
+                    tarjetaCreditoService.save(datosUsuario.getTarjetasCredito());
+                }
+
+                sesion.setAttribute("clienteFinal", cliente);
+                registroCompleto=true;
+                model.addAttribute("clientePlantilla", cliente);
+                model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
+                return "registro/resumen";
             }
-            tarjetaCreditoService.save(datos_usuario.getTarjetasCredito()); // Guardar las tarjetas de crédito
-        }
-        clienteService.save(cliente);
 
-        model.addAttribute("clientePlantilla", cliente);
-        sesion.setAttribute("clienteFinal", cliente);
-        registroCompleto = true;
 
-        model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
-        return "registro/resumen";
-    }
 
-    @PostMapping("resumen")
+            @PostMapping("resumen")
     private String resumen(
             Model model,
             HttpSession sesion

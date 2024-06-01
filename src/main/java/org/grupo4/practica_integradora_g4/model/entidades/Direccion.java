@@ -9,7 +9,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Getter
 @Setter
-
+@ToString
 @Entity
 @Data
 public class Direccion {

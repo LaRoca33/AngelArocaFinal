@@ -2,6 +2,7 @@ package org.grupo4.practica_integradora_g4.service;
 
 import jakarta.transaction.Transactional;
 import org.grupo4.practica_integradora_g4.model.entidades.Cliente;
+import org.grupo4.practica_integradora_g4.model.entidades.Usuario;
 import org.grupo4.practica_integradora_g4.repositories.ClienteRepository;
 import org.grupo4.practica_integradora_g4.repositories.DireccionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,10 @@ public class ClienteService {
         direccionRepository.deleteByClienteId(id);
         clienteRepository.deleteById(id);
     }
+    public Cliente findByUsuario(Usuario usuario) {
+        return clienteRepository.findByUsuarioEmail(usuario);
+    }
+
   /* public List<Cliente> busquedaParametrizada(String nombre, String apellidos, String email, String pais, String genero,String telefono, String tipoDoc, String doc, String comentarios){
         return clienteRepository.findByNombreContainingIgnoreCaseAndApellidosContainingIgnoreCaseAndUsuarioEmail_EmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndGeneroGenContainingIgnoreCaseAndTelefonoMovilContainingIgnoreCaseAndTipoDocumentoClienteContainingIgnoreCaseAndDocumentoContainingIgnoreCaseAndComentariosContainingIgnoreCase(
                 nombre, apellidos, email, pais, genero,telefono, tipoDoc, doc, comentarios);
