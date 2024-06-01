@@ -21,7 +21,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-@ToString
+@ToString(exclude ="auditoria")
 @Validated
 @ComprobarClaves
 @Entity

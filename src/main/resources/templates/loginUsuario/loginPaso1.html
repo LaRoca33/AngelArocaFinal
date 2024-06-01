@@ -23,7 +23,7 @@
             <legend>Ingrese su correo electrónico</legend>
             <div>
                 <label for="email">Email:</label>
-                <input type="text" id="email" th:field="*{email}" required/>
+                <input type="text" id="email" th:field="*{email}" />
             </div>
             <div th:if="${error}" class="error">
                 <p th:text="${error}"></p>

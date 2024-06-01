@@ -9,7 +9,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "cliente")
 @Entity
 @Data
 public class Direccion {

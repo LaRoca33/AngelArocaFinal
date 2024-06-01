@@ -146,7 +146,6 @@ public class ControladorRegistroCliente {
                     model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
                     return "registro/paso1";
                 }
-                System.out.println(cliente.getGenero());
                 sesion.setAttribute("datos_personales", cliente);
                 model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
                 return "redirect:/registro/paso2";
@@ -163,8 +162,6 @@ public class ControladorRegistroCliente {
         if (sesion.getAttribute("usuarioAutenticado") == null) {
             return "administrador/errorAcceso";
         }
-        System.out.println(cliente
-                .toString());
         if (sesion.getAttribute("datos_contacto")!=null){
             cliente=(Cliente) sesion.getAttribute("datos_contacto");
             model.addAttribute("clientePlantilla", cliente);
@@ -188,10 +185,7 @@ public class ControladorRegistroCliente {
             System.out.println(posiblesErrores.getAllErrors());
             return "registro/paso2";
         } else {
-
-            System.out.println(cliente.toString());
             sesion.setAttribute("datos_contacto", cliente);
-
             model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
             return "redirect:/registro/paso3";
         }
@@ -212,47 +206,62 @@ public class ControladorRegistroCliente {
 
         if (sesion.getAttribute("datos_usuario")!=null){
             cliente=(Cliente) sesion.getAttribute("datos_usuario");
-
             model.addAttribute("clientePlantilla", cliente);
         }else model.addAttribute("clientePlantilla",cliente);
         model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
         return "registro/paso3";
     }
 
-    @PostMapping("paso3")
-    private String paso3Post(
-            @Validated({DatosUsuario.class})
-            @ModelAttribute("clientePlantilla") Cliente cliente,
-            @RequestParam("numero") Integer numero,
-            @RequestParam("tipoTarjeta") String tipoTarjeta,
-            @RequestParam("cvv") String cvv,
-            @RequestParam("fechaCad") LocalDate fechaCad,
-            BindingResult posiblesErrores,
-            HttpSession sesion,
-            Model model
-    ){
-        if (sesion.getAttribute("usuarioAutenticado") == null) {
-            return "administrador/errorAcceso";
-        }
-        if (posiblesErrores.hasErrors()) {
-            System.out.println(posiblesErrores.getAllErrors());
-            return "registro/paso3";
-        } else {
+            @PostMapping("paso3")
+            private String paso3Post(
+                    @Validated({DatosUsuario.class}) // Aplicar validaciones del grupo DatosUsuario
+                    @ModelAttribute("clientePlantilla") Cliente cliente,
+                    BindingResult posiblesErrores,
+                    @RequestParam("numero") Integer numero,
+                    @RequestParam("tipoTarjeta") String tipoTarjeta,
+                    @RequestParam("cvv") String cvv,
+                    @RequestParam("fechaCad") LocalDate fechaCad,
+                    HttpSession sesion,
+                    Model model
+            ) {
+                if (sesion.getAttribute("usuarioAutenticado") == null) {
+                    return "administrador/errorAcceso";
+                }
 
-            // Procesar las tarjetas de crédito y agregar al cliente
+                boolean hayErrores = false;
 
-            cliente.addItem(new TarjetaCredito(numero,tipoTarjeta,cvv,fechaCad,cliente));
+                // Validar los parámetros enviados
+                if (numero == null || numero.toString().isEmpty()) {
+                    model.addAttribute("errorNumero", "El número de la tarjeta es obligatorio");
+                    hayErrores = true;
+                }
+                if (tipoTarjeta == null || tipoTarjeta.isEmpty()) {
+                    model.addAttribute("errorTipoTarjeta", "El tipo de tarjeta es obligatorio");
+                    hayErrores = true;
+                }
+                if (cvv == null || cvv.isEmpty()) {
+                    model.addAttribute("errorCvv", "El CVV es obligatorio");
+                    hayErrores = true;
+                }
+                if (fechaCad == null) {
+                    model.addAttribute("errorFechaCad", "La fecha de caducidad es obligatoria");
+                    hayErrores = true;
+                }
+
+                // Verificar si hay errores de validación en los parámetros o en el objeto Cliente
+                if (posiblesErrores.hasErrors() || hayErrores) {
+                    model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
+                    return "registro/paso3";
+                }
+
+                // Si no hay errores, continuar con el proceso de registro
+                cliente.addItem(new TarjetaCredito(numero, tipoTarjeta, cvv, fechaCad, cliente));
+                sesion.setAttribute("datos_usuario", cliente);
+                model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
+                return "redirect:/registro/resumen";
+            }
 
 
-            // Guardar el cliente en la base de datos, si es necesario
-            // clienteService.save(cliente);
-
-            sesion.setAttribute("datos_usuario", cliente);
-
-            model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
-            return "redirect:/registro/resumen";
-        }
-    }
 
 
             @GetMapping("resumen")
@@ -337,7 +346,14 @@ public class ControladorRegistroCliente {
 
         Cliente cliente = (Cliente) sesion.getAttribute("clienteFinal");
         model.addAttribute("clientePlantilla", cliente);
-
+                if (sesion.getAttribute("datos_personales") == null ||
+                        sesion.getAttribute("datos_contacto") == null ||
+                        sesion.getAttribute("datos_usuario") == null) {
+                    // Si falta alguno de los datos esenciales, mostrar un mensaje de error
+                    model.addAttribute("error", "Faltan datos esenciales para completar el registro");
+                    // Redirigir de vuelta a la página de resumen
+                    return "registro/resumen";
+                }
         if (registroCompleto) {
             registroCompleto=false;
             clienteService.save(cliente);

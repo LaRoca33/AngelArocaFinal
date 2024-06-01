@@ -99,7 +99,7 @@ public class Cliente {
     )
     private Auditoria auditoria;
 
-    @NotBlank ( groups = DatosUsuario.class)
+    @NotBlank (groups = DatosUsuario.class)
     @NotNull (groups = DatosUsuario.class)
     private String comentarios;
 
