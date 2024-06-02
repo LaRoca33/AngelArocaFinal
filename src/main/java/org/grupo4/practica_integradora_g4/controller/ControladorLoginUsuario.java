@@ -1,21 +1,18 @@
 package org.grupo4.practica_integradora_g4.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.grupo4.practica_integradora_g4.extras.Colecciones;
 import org.grupo4.practica_integradora_g4.model.entidades.Usuario;
 import org.grupo4.practica_integradora_g4.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -31,6 +28,7 @@ public class ControladorLoginUsuario {
         model.addAttribute("usuario", new Usuario());
         return "loginUsuario/loginPaso1";
     }
+
     @PostMapping("/loginUsuario/email")
     public String verificarEmail(@ModelAttribute Usuario usuario, HttpSession session, Model model) {
         Optional<Usuario> usuarioExistente = usuarioService.findByEmail(usuario.getEmail());
@@ -40,7 +38,7 @@ public class ControladorLoginUsuario {
                 model.addAttribute("usuario_bloqueado", true);
                 String fechaDesbloqueoFormateada = usuarioEncontrado.getFechaDesbloqueo().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
                 model.addAttribute("fechaDesbloqueo", fechaDesbloqueoFormateada);
-                model.addAttribute("error","Usuario bloqueado");
+                model.addAttribute("error", "Usuario bloqueado");
                 return "loginUsuario/loginPaso1";
             }
             session.setAttribute("usuarioTemporal", usuarioEncontrado);
@@ -50,7 +48,6 @@ public class ControladorLoginUsuario {
             return "loginUsuario/loginPaso1";
         }
     }
-
 
     // Paso 2: Pedir la contraseña del usuario
     @GetMapping("/loginUsuario/clave")
@@ -63,7 +60,7 @@ public class ControladorLoginUsuario {
     }
 
     @PostMapping("/loginUsuario/clave")
-    public String verificarPassword(@ModelAttribute Usuario usuario, HttpSession session, Model model) {
+    public String verificarPassword(@ModelAttribute Usuario usuario, HttpSession session, HttpServletResponse response, Model model) {
         if (session.getAttribute("usuarioTemporal") == null) {
             return "administrador/errorAcceso";
         }
@@ -86,6 +83,17 @@ public class ControladorLoginUsuario {
             model.addAttribute("error", "Contraseña incorrecta. Intentos fallidos: " + usuarioTemporal.getIntentosFallidos());
             return "loginUsuario/loginPaso2";
         }
+        // Incrementar el contador de accesos y establecer la cookie
+        usuarioTemporal.setNumeroAccesos(usuarioTemporal.getNumeroAccesos() + 1);
+        usuarioService.save(usuarioTemporal);
+
+        Cookie cookie = new Cookie("usuarioEmail", usuarioTemporal.getEmail());
+        Cookie accessCookie = new Cookie("contAccesos", String.valueOf(usuarioTemporal.getNumeroAccesos()));
+        cookie.setMaxAge(60 * 60 * 24 * 7); // Cookie válida por 7 días
+        accessCookie.setMaxAge(60 * 60 * 24 * 7);
+        response.addCookie(cookie);
+        response.addCookie(accessCookie);
+
         session.setAttribute("usuarioAutenticado", usuarioTemporal);
         session.removeAttribute("usuarioTemporal");
         return "redirect:/registro/paso1";
@@ -111,5 +119,4 @@ public class ControladorLoginUsuario {
         usuarioService.save(usuario);
         return "redirect:/loginUsuario/email";
     }
-
 }
