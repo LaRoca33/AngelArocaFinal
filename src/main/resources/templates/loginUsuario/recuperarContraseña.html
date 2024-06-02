@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script th:src="@{/js/recuperarContraseña.js}"></script>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img th:src="@{/img/logo.png}" height="100" width="100" alt="Logo de tu Aplicación">
+        <h1>Autos Elite</h1>
+    </div>
+</header>
+<h2>Recuperar Contraseña</h2>
+<div id="preguntaRecuperacion">
+    <fieldset>
+        <legend>Responda a la pregunta de recuperación</legend>
+        <div>
+            <label for="pregRec">Pregunta de Recuperación:</label>
+            <p id="pregRec" th:text="${preguntaRecuperacion}"></p>
+        </div>
+        <div>
+            <label for="respRec">Respuesta:</label>
+            <input type="text" id="respRec" name="respRec" required/>
+        </div>
+        <input type="button" value="Recuperar Contraseña" id="verificarRespuestaBtn"> <p><a th:href="@{/loginUsuario/email}">Volver al Inicio</a></p>
+    </fieldset>
+</div>
+<div id="mensaje"></div>
+</body>
+</html>

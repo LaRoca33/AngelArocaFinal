@@ -13,6 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -98,7 +100,32 @@ public class ControladorLoginUsuario {
         session.removeAttribute("usuarioTemporal");
         return "redirect:/registro/paso1";
     }
+    @GetMapping("/recuperarContraseña")
+    public String mostrarFormularioRecuperacion(HttpSession session, Model model) {
+        Usuario usuarioTemporal = (Usuario) session.getAttribute("usuarioTemporal");
+        if (usuarioTemporal == null) {
+            return "redirect:/loginUsuario/email";
+        }
+        model.addAttribute("preguntaRecuperacion", usuarioTemporal.getPregRec());
+        return "loginUsuario/recuperarContraseña";
+    }
 
+    @PostMapping("/verificarRespuestaRecuperacion")
+    @ResponseBody
+    public Map<String, String> verificarRespuestaRecuperacion(HttpSession session, @RequestParam String respRec) {
+        Map<String, String> response = new HashMap<>();
+        Usuario usuarioTemporal = (Usuario) session.getAttribute("usuarioTemporal");
+        if (usuarioTemporal == null) {
+            response.put("error", "Sesión expirada. Intente de nuevo.");
+            return response;
+        }
+        if (usuarioTemporal.getRespRec().equalsIgnoreCase(respRec)) {
+            response.put("clave", usuarioTemporal.getClave());
+        } else {
+            response.put("error", "Respuesta de recuperación incorrecta.");
+        }
+        return response;
+    }
     @GetMapping("/registroUsuario")
     public String mostrarFormularioDeRegistro(Model model) {
         model.addAttribute("usuario", new Usuario());

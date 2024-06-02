@@ -3,6 +3,8 @@
 <head>
     <title>Login - Paso 2</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script th:src="@{/js/recuperarContraseña.js}"></script>
 </head>
 <body>
 <header>
@@ -24,6 +26,13 @@
         </div>
     </fieldset>
     <input type="submit" value="Iniciar Sesión">
+    <p><a href="#" id="olvidoContraseña">¿Has olvidado tu contraseña?</a></p>
 </form>
+
+<script>
+    document.getElementById('olvidoContraseña').addEventListener('click', function() {
+        window.location.href = '/recuperarContraseña';
+    });
+</script>
 </body>
 </html>
