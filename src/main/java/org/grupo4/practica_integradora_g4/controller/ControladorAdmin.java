@@ -3,6 +3,8 @@ package org.grupo4.practica_integradora_g4.controller;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.grupo4.practica_integradora_g4.model.entidades.Cliente;
+import org.grupo4.practica_integradora_g4.model.entidades.Genero;
+import org.grupo4.practica_integradora_g4.model.entidades.Pais;
 import org.grupo4.practica_integradora_g4.model.entidades.Usuario;
 import org.grupo4.practica_integradora_g4.model.mongo.Categoria;
 import org.grupo4.practica_integradora_g4.model.mongo.Producto;
@@ -10,10 +12,7 @@ import org.grupo4.practica_integradora_g4.repositories.ClienteRepository;
 import org.grupo4.practica_integradora_g4.repositories.UsuarioRepository;
 import org.grupo4.practica_integradora_g4.repositories.mongo.ProductoRepository;
 import org.grupo4.practica_integradora_g4.repositories.mongo.CategoriaRepository;
-import org.grupo4.practica_integradora_g4.service.CategoriaService;
-import org.grupo4.practica_integradora_g4.service.ClienteService;
-import org.grupo4.practica_integradora_g4.service.ProductoService;
-import org.grupo4.practica_integradora_g4.service.UsuarioService;
+import org.grupo4.practica_integradora_g4.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -24,6 +23,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -42,6 +43,12 @@ public class ControladorAdmin {
 
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private GeneroService generoService;
+
+    @Autowired
+    private PaisService paisService;
 
 
     @GetMapping("/inicio")
@@ -112,15 +119,91 @@ public class ControladorAdmin {
     @ResponseBody
     public ResponseEntity<String> bloquearUsuario(@PathVariable("id") String usuario_id) {
         try {
+            // Intenta bloquear el usuario usando el servicio
             String mensajeOperacion = usuarioService.bloquearUsuario(usuario_id);
+
+            // Si el mensaje indica que el usuario no existe, responde con un estado 404 (Not Found)
             if (mensajeOperacion.equals("El usuario no existe")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensajeOperacion);
             }
+
+            // Si el bloqueo fue exitoso, responde con un estado 200 (OK) y el mensaje de la operación
             return ResponseEntity.ok().body(mensajeOperacion);
         } catch (Exception e) {
+            // Si ocurre una excepción, responde con un estado 500 (Internal Server Error) y el mensaje de error
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al bloquear el usuario: " + e.getMessage());
         }
     }
+
+
+
+    @PostMapping("/actualizar-cliente/{id}")
+    @ResponseBody
+    public ResponseEntity<String> actualizarCliente(@PathVariable("id") UUID clienteId, @RequestBody Map<String, String> updateData) {
+        try {
+            String field = updateData.get("field");
+            String value = updateData.get("value");
+            System.out.println("Field: " + field + ", Value: " + value);  // Log the field and value
+
+            Optional<Cliente> clienteOpt = clienteService.findById(clienteId);
+            if (clienteOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado");
+            }
+
+            Cliente cliente = clienteOpt.get();
+
+            switch (field) {
+                case "nombre":
+                    cliente.setNombre(value);
+                    break;
+                case "apellidos":
+                    cliente.setApellidos(value);
+                    break;
+                case "email":
+                    Usuario usuario = cliente.getUsuarioEmail();
+                    usuario.setEmail(value);
+                    usuarioService.save(usuario); // Guardar los cambios del usuario
+                    break;
+                case "pais":
+                    Optional<Pais> paisOpt = paisService.findByName(value);
+                    if (paisOpt.isEmpty()) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("País no válido");
+                    }
+                    cliente.setPais(paisOpt.get());
+                    break;
+                case "genero":
+                    Optional<Genero> generoOpt = generoService.findByName(value);
+                    if (generoOpt.isEmpty()) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Género no válido");
+                    }
+                    cliente.setGenero(generoOpt.get());
+                    break;
+                case "telefonoMovil":
+                    cliente.setTelefonoMovil(value);
+                    break;
+                case "tipoDocumentoCliente":
+                    cliente.setTipoDocumentoCliente(value);
+                    break;
+                case "documento":
+                    cliente.setDocumento(value);
+                    break;
+                case "comentarios":
+                    cliente.setComentarios(value);
+                    break;
+                default:
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campo no válido");
+            }
+
+            clienteService.save(cliente);
+            return ResponseEntity.ok("Cliente actualizado correctamente");
+        } catch (Exception e) {
+            e.printStackTrace();  // Log the exception
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el cliente: " + e.getMessage());
+        }
+    }
+
+
+
 
 
 

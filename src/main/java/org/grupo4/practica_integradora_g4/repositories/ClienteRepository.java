@@ -14,4 +14,5 @@ public interface ClienteRepository extends JpaRepository <Cliente, UUID> {
 */
     List<Cliente> findByNombreContainingIgnoreCaseAndApellidosContainingIgnoreCaseAndUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndGeneroGenContainingIgnoreCaseAndTelefonoMovilContainingIgnoreCaseAndDocumentoContainingIgnoreCaseAndTipoDocumentoClienteContainingIgnoreCaseAndComentariosContainingIgnoreCase(String nombre,String apellidos,String email,String pais,String genero,String telefono,String documento,String tipoDocumentoCliente,String comentarios);
     Cliente findByUsuarioEmail(Usuario usuarioEmail);
+
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,6 +29,7 @@ public class ClienteService {
         direccionRepository.deleteByClienteId(id);
         clienteRepository.deleteById(id);
     }
+    public Optional<Cliente> findById(UUID id){ return clienteRepository.findById(id);}
     public Cliente findByUsuario(Usuario usuario) {
         return clienteRepository.findByUsuarioEmail(usuario);
     }
