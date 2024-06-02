@@ -306,11 +306,12 @@ public class ControladorRegistroCliente {
                 }
 
                 cliente.setUsuarioEmail(usuAut);
-                clienteService.save(cliente);
+
 
                 // Guardar la dirección personal si existe en la sesión
                 if (sesion.getAttribute("datos_contacto") != null) {
                     Cliente datosContacto = (Cliente) sesion.getAttribute("datos_contacto");
+                    clienteService.save(cliente);
                     Direccion direccion = datosContacto.getDirecciones();
                     direccion.setCliente(cliente);
                     direccionService.save(direccion);
@@ -319,7 +320,9 @@ public class ControladorRegistroCliente {
 
                 // Guardar las tarjetas de crédito si existen en la sesión
                 if (sesion.getAttribute("datos_usuario") != null) {
+
                     Cliente datosUsuario = (Cliente) sesion.getAttribute("datos_usuario");
+                    clienteService.save(cliente);
                     for (TarjetaCredito tarjeta : datosUsuario.getTarjetasCredito()) {
                         tarjeta.setCliente(cliente);
                     }
