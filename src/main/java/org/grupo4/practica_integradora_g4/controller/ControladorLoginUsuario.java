@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.grupo4.practica_integradora_g4.model.entidades.Usuario;
+import org.grupo4.practica_integradora_g4.service.ClienteService;
 import org.grupo4.practica_integradora_g4.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,9 @@ public class ControladorLoginUsuario {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private ClienteService clienteService;
     private static final int MAX_INTENTOS_FALLIDOS = 3;
 
     // Paso 1: Pedir el email del usuario
@@ -98,7 +102,12 @@ public class ControladorLoginUsuario {
 
         session.setAttribute("usuarioAutenticado", usuarioTemporal);
         session.removeAttribute("usuarioTemporal");
-        return "redirect:/registro/paso1";
+        if (clienteService.findByUsuario(usuarioTemporal)!=null){
+            return "redirect:http://localhost:8081/tienda";
+        }else{
+            return "redirect:/registro/paso1";
+        }
+
     }
     @GetMapping("/recuperarContraseña")
     public String mostrarFormularioRecuperacion(HttpSession session, Model model) {
