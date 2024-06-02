@@ -8,6 +8,7 @@ import org.grupo4.practica_integradora_g4.repositories.DireccionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,8 +42,8 @@ public class ClienteService {
     */
 
 
-    public List<Cliente> buscarParam(String email,String pais){
-        return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCase(email,pais);
+    public List<Cliente> buscarParam(String email, String pais, LocalDate fechaInicio, LocalDate fechaFin){
+        return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndFechaNacimientoBetween(email,pais,fechaInicio,fechaFin);
     }
 
 

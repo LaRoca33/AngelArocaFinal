@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -73,12 +74,24 @@ public class ControladorAdmin {
     public String buscarCliente(
             @RequestParam(value = "usuarioEmail.email", required = false) String email,
             @RequestParam(value = "pais.nombre", required = false) String pais,
+            @RequestParam(value = "fechaInicio", required = false) LocalDate fechaInicio,
+            @RequestParam(value = "fechaFin", required = false) LocalDate fechaFin,
             Model modelo) {
         List<Cliente> clientes;
         modelo.addAttribute("usuarioEmail.email", email);
         modelo.addAttribute("pais.nombre", pais);
-
-        clientes = clienteService.buscarParam( email,pais);
+        modelo.addAttribute("fechaInicio",fechaInicio);
+        modelo.addAttribute("fechaFin",fechaFin);
+        if (pais == null || pais.equalsIgnoreCase("TODOS")) {
+            pais = "";
+        }
+        if (fechaInicio == null) {
+            fechaInicio = LocalDate.of(1800, 1, 1);
+        }
+        if (fechaFin == null) {
+            fechaFin = LocalDate.of(3000, 1, 1);
+        }
+        clientes = clienteService.buscarParam( email,pais,fechaInicio,fechaFin);
 
         modelo.addAttribute("clientes", clientes);
 

@@ -35,6 +35,12 @@
             <label for="email">Email:</label>
             <input type="text" id="email" name="usuarioEmail.email" th:value="${usuarioEmail?.email}" >
 
+            <label for="fechaInicio">Fecha de inicio:</label>
+            <input type="text" id="fechaInicio" name="fechaInicio" th:value="${fechaInicio}">
+
+            <label for="fechaFin">Fecha de fin:</label>
+            <input type="text" id="fechaFin" name="fechaFin" th:value="${fechaFin}">
+
             <label for="pais">Pais:</label>
             <select id="pais" name="pais.nombre" th:value="${pais?.nombre}">
                 <option value="TODOS">TODOS</option>
@@ -54,6 +60,7 @@
                 <th>Apellidos</th>
                 <th>Email</th>
                 <th>Pais</th>
+                <th>FechaNac</th>
                 <th>Genero</th>
                 <th>Telefono Movil</th>
                 <th>Tipo Documento</th>
@@ -68,6 +75,7 @@
                 <td class="editable" data-field="apellidos" data-id="${cliente.id}" th:text="${cliente.apellidos}"></td>
                 <td class="editable" data-field="email" data-id="${cliente.id}" th:text="${cliente.usuarioEmail.email}"></td>
                 <td class="editable" data-field="pais" data-id="${cliente.id}" th:text="${cliente.pais.nombre}"></td>
+                <td class="editable" data-field="fechaNacimiento" data-id="${cliente.id}" th:text="${cliente.fechaNacimiento}"></td>
                 <td class="editable" data-field="genero" data-id="${cliente.id}" th:text="${cliente.genero.gen}"></td>
                 <td class="editable" data-field="telefonoMovil" data-id="${cliente.id}" th:text="${cliente.telefonoMovil}"></td>
                 <td class="editable" data-field="tipoDocumentoCliente" data-id="${cliente.id}" th:text="${cliente.tipoDocumentoCliente}"></td>
