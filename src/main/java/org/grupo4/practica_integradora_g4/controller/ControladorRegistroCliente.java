@@ -255,7 +255,7 @@ public class ControladorRegistroCliente {
                 }
 
                 // Si no hay errores, continuar con el proceso de registro
-                cliente.addItem(new TarjetaCredito(numero, tipoTarjeta, cvv, fechaCad, cliente));
+                cliente.anadirTarjeta(new TarjetaCredito(numero, tipoTarjeta, cvv, fechaCad, cliente));
                 sesion.setAttribute("datos_usuario", cliente);
                 model.addAttribute("usuarioAutenticado", sesion.getAttribute("usuarioAutenticado"));
                 return "redirect:/registro/resumen";
@@ -291,6 +291,7 @@ public class ControladorRegistroCliente {
                     cliente.setDocumento(datosPersonales.getDocumento());
                     cliente.setNombre(datosPersonales.getNombre());
                     cliente.setApellidos(datosPersonales.getApellidos());
+                    cliente.setSalario(datosPersonales.getSalario());
                 }
 
                 // Actualizar los datos de contacto si existen en la sesión

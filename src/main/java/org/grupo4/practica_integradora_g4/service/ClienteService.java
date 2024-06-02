@@ -41,8 +41,8 @@ public class ClienteService {
     */
 
 
-    public List<Cliente> buscarParam(String nombre,String apellidos,String email,String pais,String genero,String telefonoMovil,String documento,String tipoDocumentoCliente,String comentarios){
-        return clienteRepository.findByNombreContainingIgnoreCaseAndApellidosContainingIgnoreCaseAndUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndGeneroGenContainingIgnoreCaseAndTelefonoMovilContainingIgnoreCaseAndDocumentoContainingIgnoreCaseAndTipoDocumentoClienteContainingIgnoreCaseAndComentariosContainingIgnoreCase(nombre,apellidos,email,pais,genero,telefonoMovil,documento,tipoDocumentoCliente,comentarios);
+    public List<Cliente> buscarParam(String email,String pais){
+        return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCase(email,pais);
     }
 
 

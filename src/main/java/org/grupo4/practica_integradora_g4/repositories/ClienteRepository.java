@@ -12,7 +12,7 @@ public interface ClienteRepository extends JpaRepository <Cliente, UUID> {
     List<Cliente> findByNombreContainingIgnoreCaseAndApellidosContainingIgnoreCaseAndUsuarioEmail_EmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndGeneroGenContainingIgnoreCaseAndTelefonoMovilContainingIgnoreCaseAndTipoDocumentoClienteContainingIgnoreCaseAndDocumentoContainingIgnoreCaseAndComentariosContainingIgnoreCase(
             String nombre, String apellidos, String email, String pais, String genero,String telefono, String tipoDoc, String doc, String comentarios);
 */
-    List<Cliente> findByNombreContainingIgnoreCaseAndApellidosContainingIgnoreCaseAndUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndGeneroGenContainingIgnoreCaseAndTelefonoMovilContainingIgnoreCaseAndDocumentoContainingIgnoreCaseAndTipoDocumentoClienteContainingIgnoreCaseAndComentariosContainingIgnoreCase(String nombre,String apellidos,String email,String pais,String genero,String telefono,String documento,String tipoDocumentoCliente,String comentarios);
+    List<Cliente> findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCase(String email,String pais);
     Cliente findByUsuarioEmail(Usuario usuarioEmail);
 
 }

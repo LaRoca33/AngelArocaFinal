@@ -63,6 +63,10 @@
         <input placeholder="000000A" type="text"  th:field="*{documento}">
         <div th:errors="*{documento}" class="error"></div>
         <br>
+        <label for="salario">Salario: </label>
+        <input placeholder="1000" type="text"  th:field="*{salario}">
+        <div th:errors="*{salario}" class="error"></div>
+        <br>
         <label for="nombre">Nombre: </label>
         <input placeholder="Jorge..." type="text"  th:field="*{nombre}">
         <div th:errors="*{nombre}" class="error"></div>
@@ -70,6 +74,10 @@
         <label for="apellidos" >Apellidos: </label>
         <input placeholder="García..." type="text" th:field="*{apellidos}"/>
         <div th:errors="*{apellidos}" class="error"></div>
+        <br>
+        <label for="fechaNacimiento" >Apellidos: </label>
+        <input placeholder="2020-01-01" type="text" th:field="*{fechaNacimiento}"/>
+        <div th:errors="*{fechaNacimiento}" class="error"></div>
         <br>
 
         <div th:if="${#fields.hasErrors('global')}">

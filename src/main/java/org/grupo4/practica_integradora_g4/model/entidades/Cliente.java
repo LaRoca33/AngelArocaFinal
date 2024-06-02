@@ -39,6 +39,7 @@ public class Cliente {
 
     )
     private Genero genero;
+    @NotNull(groups = DatosPersonales.class)
     private LocalDate fechaNacimiento;
     @ManyToOne
     @JoinColumn(
@@ -52,6 +53,8 @@ public class Cliente {
     @NotBlank( groups = DatosPersonales.class)
     private String nombre;
     private String apellidos;
+    @NotNull(groups = DatosPersonales.class)
+    private Integer salario;
 
     //DATOS DE CONTACTO
     @OneToOne
@@ -73,9 +76,10 @@ public class Cliente {
     )
     private Usuario usuarioEmail;
   /*  @NotBlank(groups = DatosUsuario.class)
+   */
     @NotNull(groups = DatosUsuario.class)
 
-   */
+
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TarjetaCredito> tarjetasCredito = new HashSet<>() ;
 
@@ -103,7 +107,7 @@ public class Cliente {
     @NotNull (groups = DatosUsuario.class)
     private String comentarios;
 
-    public void addItem(TarjetaCredito tarjetaCredito) {
+    public void anadirTarjeta(TarjetaCredito tarjetaCredito) {
         this.tarjetasCredito.add(tarjetaCredito);
         tarjetaCredito.setCliente(this);
     }

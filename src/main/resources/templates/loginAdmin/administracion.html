@@ -32,12 +32,6 @@
         <h2 class="mt-5">Lista de Clientes</h2>
         <form id="formBusquedaCliente" th:action="@{/administrador/inicio/buscar-clientes}" method="post">
 
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" th:value="${nombre}">
-
-            <label for="apellidos">Apellidos:</label>
-            <input type="text" id="apellidos" name="apellidos" th:value="${apellidos}">
-
             <label for="email">Email:</label>
             <input type="text" id="email" name="usuarioEmail.email" th:value="${usuarioEmail?.email}" >
 
@@ -51,25 +45,6 @@
                 <option value="Grecia">GRECIA</option>
             </select>
 
-            <label for="genero">Genero:</label>
-            <select id="genero" name="genero.gen" th:value="${genero?.gen}">
-                <option value="TODOS">TODOS</option>
-                <option value="Masculino">MASCULINO</option>
-                <option value="Femenino">FEMENINO</option>
-                <option value="Otro">OTRO</option>
-            </select>
-
-            <label for="telefonoMovil">Telefono:</label>
-            <input type="text" id="telefonoMovil" name="telefonoMovil" th:value="${telefonoMovil}">
-
-            <label for="documento">Documento:</label>
-            <input type="text" id="documento" name="documento" th:value="${documento}">
-
-            <label for="tipoDocumentoCliente">Tipo Documento:</label>
-            <input type="text" id="tipoDocumentoCliente" name="tipoDocumentoCliente" th:value="${tipoDocumentoCliente}">
-
-            <label for="comentarios">Comentarios:</label>
-            <input type="text" id="comentarios" name="comentarios" th:value="${comentarios}">
             <input type="submit" value="Buscar clientes">
         </form>
         <table class="table table-bordered mt-3">
