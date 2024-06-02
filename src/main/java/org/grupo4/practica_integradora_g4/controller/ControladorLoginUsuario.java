@@ -88,11 +88,11 @@ public class ControladorLoginUsuario {
         usuarioService.save(usuarioTemporal);
 
         Cookie cookie = new Cookie("usuarioEmail", usuarioTemporal.getEmail());
-        Cookie accessCookie = new Cookie("contAccesos", String.valueOf(usuarioTemporal.getNumeroAccesos()));
+        Cookie accesoCookie = new Cookie("contAccesos", String.valueOf(usuarioTemporal.getNumeroAccesos()));
         cookie.setMaxAge(60 * 60 * 24 * 7); // Cookie válida por 7 días
-        accessCookie.setMaxAge(60 * 60 * 24 * 7);
+        accesoCookie.setMaxAge(60 * 60 * 24 * 7);
         response.addCookie(cookie);
-        response.addCookie(accessCookie);
+        response.addCookie(accesoCookie);
 
         session.setAttribute("usuarioAutenticado", usuarioTemporal);
         session.removeAttribute("usuarioTemporal");
