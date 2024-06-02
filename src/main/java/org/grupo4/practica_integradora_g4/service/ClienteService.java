@@ -42,8 +42,14 @@ public class ClienteService {
     */
 
 
-    public List<Cliente> buscarParam(String email, String pais, LocalDate fechaInicio, LocalDate fechaFin){
-        return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndFechaNacimientoBetween(email,pais,fechaInicio,fechaFin);
+    public List<Cliente> buscarParam(String email, List <String> pais, LocalDate fechaInicio, LocalDate fechaFin){
+        if (pais.isEmpty()) {
+            // No se filtra por país, realizar búsqueda sin filtrar por país
+            return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndFechaNacimientoBetween(email, fechaInicio, fechaFin);
+        } else {
+            // Filtrar por los países seleccionados en la lista
+            return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreInAndFechaNacimientoBetween(email, pais, fechaInicio, fechaFin);
+        }
     }
 
 

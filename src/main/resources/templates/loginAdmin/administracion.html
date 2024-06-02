@@ -42,8 +42,7 @@
             <input type="text" id="fechaFin" name="fechaFin" th:value="${fechaFin}">
 
             <label for="pais">Pais:</label>
-            <select id="pais" name="pais.nombre" th:value="${pais?.nombre}">
-                <option value="TODOS">TODOS</option>
+            <select id="pais" name="pais.nombre" th:value="${pais?.nombre}" multiple="multiple">
                 <option value="Portugal">PORTUGAL</option>
                 <option value="Italia">ITALIA</option>
                 <option value="Francia">FRANCIA</option>

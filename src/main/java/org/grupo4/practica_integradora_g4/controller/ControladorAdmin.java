@@ -23,10 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Controller
@@ -73,7 +70,7 @@ public class ControladorAdmin {
     @PostMapping("/inicio/buscar-clientes")
     public String buscarCliente(
             @RequestParam(value = "usuarioEmail.email", required = false) String email,
-            @RequestParam(value = "pais.nombre", required = false) String pais,
+            @RequestParam(value = "pais.nombre", required = false) List<String> pais,
             @RequestParam(value = "fechaInicio", required = false) LocalDate fechaInicio,
             @RequestParam(value = "fechaFin", required = false) LocalDate fechaFin,
             Model modelo) {
@@ -82,8 +79,8 @@ public class ControladorAdmin {
         modelo.addAttribute("pais.nombre", pais);
         modelo.addAttribute("fechaInicio",fechaInicio);
         modelo.addAttribute("fechaFin",fechaFin);
-        if (pais == null || pais.equalsIgnoreCase("TODOS")) {
-            pais = "";
+        if (pais == null){
+            pais = new ArrayList<>();
         }
         if (fechaInicio == null) {
             fechaInicio = LocalDate.of(1800, 1, 1);
