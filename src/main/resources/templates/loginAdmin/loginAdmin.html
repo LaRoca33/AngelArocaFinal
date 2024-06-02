@@ -14,15 +14,15 @@
                 <label>Email:</label>
                 <input type="text" name="email"/>
             </div>
-            <div th:if="${errorUsu}">
-                <p class="error" th:text="${errorUsu}"></p>
-            </div>
             <div class="input-group">
                 <label for="clave">Contraseña:</label>
                 <div class="password-input">
                     <input type="password" id="clave" name="clave">
                     <span class="toggle-password">👁️</span>
                 </div>
+            </div>
+            <div th:if="${errorUsu}">
+                <p class="error" th:text="${errorUsu}"></p>
             </div>
             <div th:if="${errorClave}">
                 <p class="error" th:text="${errorClave}"></p>

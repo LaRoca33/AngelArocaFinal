@@ -14,8 +14,8 @@ public interface ClienteRepository extends JpaRepository <Cliente, UUID> {
     List<Cliente> findByNombreContainingIgnoreCaseAndApellidosContainingIgnoreCaseAndUsuarioEmail_EmailContainingIgnoreCaseAndPaisNombreContainingIgnoreCaseAndGeneroGenContainingIgnoreCaseAndTelefonoMovilContainingIgnoreCaseAndTipoDocumentoClienteContainingIgnoreCaseAndDocumentoContainingIgnoreCaseAndComentariosContainingIgnoreCase(
             String nombre, String apellidos, String email, String pais, String genero,String telefono, String tipoDoc, String doc, String comentarios);
 */
-    List<Cliente> findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreInAndFechaNacimientoBetween(String email,List<String> pais, LocalDate fechaInicio, LocalDate fechaFin);
-    List <Cliente> findByUsuarioEmailEmailContainingIgnoreCaseAndFechaNacimientoBetween(String email,  LocalDate fechaInicio, LocalDate fechaFin);
+    List<Cliente> findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreInAndFechaNacimientoBetweenAndSalarioBetween(String email,List<String> pais, LocalDate fechaInicio, LocalDate fechaFin,Integer salario1,Integer salario2);
+    List <Cliente> findByUsuarioEmailEmailContainingIgnoreCaseAndFechaNacimientoBetweenAndSalarioBetween(String email,  LocalDate fechaInicio, LocalDate fechaFin,Integer salario1,Integer salario2);
     Cliente findByUsuarioEmail(Usuario usuarioEmail);
 
 }

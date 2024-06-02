@@ -42,13 +42,13 @@ public class ClienteService {
     */
 
 
-    public List<Cliente> buscarParam(String email, List <String> pais, LocalDate fechaInicio, LocalDate fechaFin){
+    public List<Cliente> buscarParam(String email, List <String> pais, LocalDate fechaInicio, LocalDate fechaFin,Integer salario1,Integer salario2){
         if (pais.isEmpty()) {
             // No se filtra por país, realizar búsqueda sin filtrar por país
-            return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndFechaNacimientoBetween(email, fechaInicio, fechaFin);
+            return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndFechaNacimientoBetweenAndSalarioBetween(email, fechaInicio, fechaFin,salario1,salario2);
         } else {
             // Filtrar por los países seleccionados en la lista
-            return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreInAndFechaNacimientoBetween(email, pais, fechaInicio, fechaFin);
+            return clienteRepository.findByUsuarioEmailEmailContainingIgnoreCaseAndPaisNombreInAndFechaNacimientoBetweenAndSalarioBetween(email, pais, fechaInicio, fechaFin,salario1,salario2);
         }
     }
 

@@ -40,11 +40,11 @@ public class ControladorLoginUsuarioAdministrador {
                 session.setAttribute("usuario", usuario);
                 return "redirect:/administrador/inicio";
             } else {
-                model.addAttribute("errorClave", "Contraseña no válida");
+                model.addAttribute("errorClave", "Contraseña y/o Usuario no válido");
                 return "loginAdmin/loginAdmin";
             }
         } else {
-            model.addAttribute("errorUsu", "No eres usuario Administrador");
+            model.addAttribute("errorUsu", "Contraseña y/o Usuario no válido");
             return "loginAdmin/loginAdmin";
         }
     }

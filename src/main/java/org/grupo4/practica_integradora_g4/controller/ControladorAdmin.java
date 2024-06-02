@@ -73,25 +73,36 @@ public class ControladorAdmin {
             @RequestParam(value = "pais.nombre", required = false) List<String> pais,
             @RequestParam(value = "fechaInicio", required = false) LocalDate fechaInicio,
             @RequestParam(value = "fechaFin", required = false) LocalDate fechaFin,
+            @RequestParam(value = "salario1", required = false) Integer salario1,
+            @RequestParam(value = "salario2", required = false) Integer salario2,
+            HttpSession session,
             Model modelo) {
         List<Cliente> clientes;
         modelo.addAttribute("usuarioEmail.email", email);
         modelo.addAttribute("pais.nombre", pais);
         modelo.addAttribute("fechaInicio",fechaInicio);
         modelo.addAttribute("fechaFin",fechaFin);
+        modelo.addAttribute("salario1",salario1);
+        modelo.addAttribute("salario2",salario2);
         if (pais == null){
             pais = new ArrayList<>();
         }
         if (fechaInicio == null) {
-            fechaInicio = LocalDate.of(1800, 1, 1);
+            fechaInicio = LocalDate.of(1000, 1, 1);
         }
         if (fechaFin == null) {
             fechaFin = LocalDate.of(3000, 1, 1);
         }
-        clientes = clienteService.buscarParam( email,pais,fechaInicio,fechaFin);
+        if (salario1 == null) {
+            salario1 = 0;
+        }
+        if (salario2 == null) {
+            salario2 = 1000000000;
+        }
+        clientes = clienteService.buscarParam( email,pais,fechaInicio,fechaFin,salario1,salario2);
 
         modelo.addAttribute("clientes", clientes);
-
+        modelo.addAttribute("usuario", session.getAttribute("usuario"));
         return "loginAdmin/administracion";
     }
     @GetMapping("/usuarios")
