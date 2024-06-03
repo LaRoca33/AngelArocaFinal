@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+
 document.addEventListener('DOMContentLoaded', function () {
     // Selecciona todos los elementos con la clase 'editable'
     document.querySelectorAll('.editable').forEach(function (element) {
@@ -98,3 +99,5 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+

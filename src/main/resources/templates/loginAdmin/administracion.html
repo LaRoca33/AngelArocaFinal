@@ -78,17 +78,17 @@
             </thead>
             <tbody>
             <tr th:each="cliente : ${clientes}">
-                <td class="editable" data-field="nombre" data-id="${cliente.id}" th:text="${cliente.nombre}"></td>
-                <td class="editable" data-field="apellidos" data-id="${cliente.id}" th:text="${cliente.apellidos}"></td>
-                <td class="editable" data-field="email" data-id="${cliente.id}" th:text="${cliente.usuarioEmail.email}"></td>
-                <td class="editable" data-field="pais" data-id="${cliente.id}" th:text="${cliente.pais.nombre}"></td>
-                <td class="editable" data-field="fechaNacimiento" data-id="${cliente.id}" th:text="${cliente.fechaNacimiento}"></td>
-                <td class="editable" data-field="salario" data-id="${cliente.id}" th:text="${cliente.salario}"></td>
-                <td class="editable" data-field="genero" data-id="${cliente.id}" th:text="${cliente.genero.gen}"></td>
-                <td class="editable" data-field="telefonoMovil" data-id="${cliente.id}" th:text="${cliente.telefonoMovil}"></td>
-                <td class="editable" data-field="tipoDocumentoCliente" data-id="${cliente.id}" th:text="${cliente.tipoDocumentoCliente}"></td>
-                <td class="editable" data-field="documento" data-id="${cliente.id}" th:text="${cliente.documento}"></td>
-                <td class="editable" data-field="comentarios" data-id="${cliente.id}" th:text="${cliente.comentarios}"></td>
+                <td class="editable" data-field="nombre" th:data-id="${cliente.id}" th:text="${cliente.nombre}"></td>
+                <td class="editable" data-field="apellidos" th:data-id="${cliente.id}" th:text="${cliente.apellidos}"></td>
+                <td class="editable" data-field="email" th:data-id="${cliente.id}" th:text="${cliente.usuarioEmail.email}"></td>
+                <td class="editable" data-field="pais" th:data-id="${cliente.id}" th:text="${cliente.pais.nombre}"></td>
+                <td class="editable" data-field="fechaNacimiento" th:data-id="${cliente.id}" th:text="${cliente.fechaNacimiento}"></td>
+                <td class="editable" data-field="salario" th:data-id="${cliente.id}" th:text="${cliente.salario}"></td>
+                <td class="editable" data-field="genero" th:data-id="${cliente.id}" th:text="${cliente.genero.gen}"></td>
+                <td class="editable" data-field="telefonoMovil" th:data-id="${cliente.id}" th:text="${cliente.telefonoMovil}"></td>
+                <td class="editable" data-field="tipoDocumentoCliente" th:data-id="${cliente.id}" th:text="${cliente.tipoDocumentoCliente}"></td>
+                <td class="editable" data-field="documento" th:data-id="${cliente.id}" th:text="${cliente.documento}"></td>
+                <td class="editable" data-field="comentarios" th:data-id="${cliente.id}" th:text="${cliente.comentarios}"></td>
                 <td>
                     <form id="formDelete" th:action="@{/administrador/inicio/eliminar/{id}(id=${cliente.id})}" method="post">
                         <button type="button" onclick="confirmarEliminacion()">Eliminar</button>
