@@ -80,10 +80,10 @@
             <tr th:each="cliente : ${clientes}">
                 <td class="editable" data-field="nombre" th:data-id="${cliente.id}" th:text="${cliente.nombre}"></td>
                 <td class="editable" data-field="apellidos" th:data-id="${cliente.id}" th:text="${cliente.apellidos}"></td>
-                <td class="editable" data-field="email" th:data-id="${cliente.id}" th:text="${cliente.usuarioEmail.email}"></td>
+                <td  th:text="${cliente.usuarioEmail.email}"></td>
                 <td class="editable" data-field="pais" th:data-id="${cliente.id}" th:text="${cliente.pais.nombre}"></td>
                 <td class="editable" data-field="fechaNacimiento" th:data-id="${cliente.id}" th:text="${cliente.fechaNacimiento}"></td>
-                <td class="editable" data-field="salario" th:data-id="${cliente.id}" th:text="${cliente.salario}"></td>
+                <td  th:text="${cliente.salario}"></td>
                 <td class="editable" data-field="genero" th:data-id="${cliente.id}" th:text="${cliente.genero.gen}"></td>
                 <td class="editable" data-field="telefonoMovil" th:data-id="${cliente.id}" th:text="${cliente.telefonoMovil}"></td>
                 <td class="editable" data-field="tipoDocumentoCliente" th:data-id="${cliente.id}" th:text="${cliente.tipoDocumentoCliente}"></td>
