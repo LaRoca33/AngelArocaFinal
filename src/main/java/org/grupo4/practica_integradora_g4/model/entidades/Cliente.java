@@ -111,18 +111,22 @@ public class Cliente {
         this.tarjetasCredito.add(tarjetaCredito);
         tarjetaCredito.setCliente(this);
     }
-    @Override
-    public int hashCode() {
-        return Objects.hash(id); // Solo usa 'id' para evitar recursión
+    @Override  // Indica que se está sobrescribiendo el método de la superclase
+    public int hashCode() {  // Sobrescribe el método hashCode de la clase Object
+        return Objects.hash(id);  // Calcula el código hash utilizando solo el campo 'id' para evitar recursión
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Cliente cliente = (Cliente) obj;
-        return Objects.equals(id, cliente.id);
+
+    @Override  // Indica que se está sobrescribiendo el método de la superclase
+    public boolean equals(Object obj) {  // Sobrescribe el método equals de la clase Object
+        if (this == obj) return true;  // Comprueba si el objeto es la misma instancia
+        if (obj == null || getClass() != obj.getClass()) return false;  // Comprueba si los objetos son de la misma clase
+        Cliente cliente = (Cliente) obj;  // Convierte el objeto en un Cliente
+        return Objects.equals(id, cliente.id);  // Compara los IDs de los clientes para determinar si son iguales
     }
+
+
+
 
 }
 
